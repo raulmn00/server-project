@@ -12,7 +12,7 @@ export class UserController {
     async getAllUsersController(): Promise<IUserEntity[]> {
         return await this.userService.getAllUsersService();
     }
-    @Get()
+    @Get(':id')
     async getUserByIdController(@Param('id') userId: string): Promise<IUserEntity> {
         try {
             return await this.userService.getUserByIdService(userId);
