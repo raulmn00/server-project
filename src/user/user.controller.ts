@@ -52,7 +52,7 @@ export class UserController {
         try {
             const userIsDeleted = await this.userService.deleteUserByIdService(userId);
             if (userIsDeleted) {
-                return 'User deleted succefuly.';
+                return 'User deleted succefully.';
             } else {
                 return 'User not found.';
             }
