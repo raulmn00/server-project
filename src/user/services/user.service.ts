@@ -2,43 +2,43 @@ import { IUserEntity } from '../entities/user.entity';
 import { UserDto } from './dto/userInput.dto';
 import { randomUUID } from 'node:crypto';
 import { PartialUserDto } from './dto/partialUserInput.dto';
+import { UserRepository } from '../user.repository';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class UserService {
-    private users: IUserEntity[] = [];
+    //private users: IUserEntity[] = [];
+
+    constructor(private readonly userRepository: UserRepository) {}
 
     async createUserService(user: UserDto): Promise<IUserEntity> {
         const userEntity = { ...user, id: randomUUID() };
-        this.users.push(userEntity);
-        return userEntity;
+        const createdUser = await this.userRepository.createUserRepository(userEntity);
+        return createdUser;
     }
     async updateUserService(userData: PartialUserDto): Promise<IUserEntity> {
-        this.users.map((user, index) => {
-            if (userData.id === user.id) {
-                const updatedUser = Object.assign(user, userData);
-                this.users.splice(index, 1, updatedUser);
-            }
-        });
-        const userUpdated = this.users.find((user) => user.id === userData.id);
+        const userUpdated = await this.userRepository.updateUserRepository(userData);
         return userUpdated;
     }
     async getAllUsersService(): Promise<IUserEntity[]> {
-        return this.users;
+        return await this.userRepository.findAllUsersRepository();
     }
 
     async deleteUserByIdService(userId: string): Promise<boolean> {
-        const existUser = this.users.find((user) => user.id === userId);
-        if (!existUser) {
+        try {
+            const existUser = this.userRepository.deleteUserRepository(userId);
+            if (existUser) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.log(err);
             return false;
         }
-        this.users.map((user, index) => {
-            if (user.id === userId) {
-                this.users.splice(index, 1);
-            }
-        });
-        return true;
     }
     async getUserByIdService(userId: string): Promise<IUserEntity> {
-        const userFinded = this.users.find((user) => user.id === userId);
+        const userFinded = this.userRepository.findUserByIdRepository(userId);
         if (!userFinded) {
             throw new Error('User not found.');
         } else {
