@@ -37,4 +37,12 @@ export class UserService {
         });
         return true;
     }
+    async getUserByIdService(userId: string): Promise<IUserEntity> {
+        const userFinded = this.users.find((user) => user.id === userId);
+        if (!userFinded) {
+            throw new Error('User not found.');
+        } else {
+            return userFinded;
+        }
+    }
 }
