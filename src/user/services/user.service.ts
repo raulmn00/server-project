@@ -16,7 +16,10 @@ export class UserService {
         const userEntity = { ...user, id: randomUUID() };
 
         if (user.password.length <= 7) {
-            throw { message: 'Invalid password.', exception: Exceptions.InvalidData };
+            throw {
+                message: 'Password must be have 7 or more characters.',
+                exception: Exceptions.InvalidData,
+            };
         }
         const createdUser = await this.userRepository.createUserRepository(userEntity);
         return createdUser;

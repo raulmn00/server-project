@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Exceptions } from 'src/utils/exceptions/exceptionsHelper';
 import { IUserEntity } from './entities/user.entity';
 import { PartialUserDto } from './services/dto/partialUserInput.dto';
 
@@ -8,8 +9,12 @@ export class UserRepository {
     constructor(private readonly prisma: PrismaService) {}
 
     async createUserRepository(user: IUserEntity): Promise<IUserEntity> {
-        const createdUser = await this.prisma.user.create({ data: user });
-        return createdUser;
+        try {
+            const createdUser = await this.prisma.user.create({ data: user });
+            return createdUser;
+        } catch (err) {
+            throw { message: err.message, exception: Exceptions.DatabaseException };
+        }
     }
     async updateUserRepository(user: PartialUserDto): Promise<IUserEntity> {
         const updatedUser = await this.prisma.user.update({

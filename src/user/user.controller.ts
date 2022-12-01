@@ -29,7 +29,7 @@ export class UserController {
         try {
             return await this.userService.getUserByIdService(userId);
         } catch (err) {
-            console.log(err);
+            handleException(err);
         }
     }
 
@@ -57,7 +57,7 @@ export class UserController {
         try {
             return await this.userService.updateUserService(userData);
         } catch (err) {
-            console.log(err);
+            handleException(err);
         }
     }
 
