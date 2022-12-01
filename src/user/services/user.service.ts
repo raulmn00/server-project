@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { PartialUserDto } from './dto/partialUserInput.dto';
 import { UserRepository } from '../user.repository';
 import { Injectable } from '@nestjs/common';
+import { Exceptions } from 'src/utils/exceptions/exceptionsHelper';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,9 @@ export class UserService {
     async createUserService(user: UserDto): Promise<IUserEntity> {
         const userEntity = { ...user, id: randomUUID() };
 
+        if (user.password.length <= 7) {
+            throw { message: 'Invalid password.', exception: Exceptions.InvalidData };
+        }
         const createdUser = await this.userRepository.createUserRepository(userEntity);
         return createdUser;
     }
