@@ -2,6 +2,7 @@ import { Injectable, INestApplication, OnModuleDestroy, OnModuleInit } from '@ne
 
 import { PrismaClient } from '@prisma/client';
 
+@Injectable()
 export class PrismaService extends PrismaClient implements OnModuleDestroy, OnModuleInit {
     constructor() {
         super();

@@ -13,6 +13,7 @@ export class UserService {
 
     async createUserService(user: UserDto): Promise<IUserEntity> {
         const userEntity = { ...user, id: randomUUID() };
+
         const createdUser = await this.userRepository.createUserRepository(userEntity);
         return createdUser;
     }

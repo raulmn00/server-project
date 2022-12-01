@@ -1,10 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Res,
+    BadRequestException,
+} from '@nestjs/common';
 import { IUserEntity } from './entities/user.entity';
 import { PartialUserDto } from './services/dto/partialUserInput.dto';
 import { UserDto } from './services/dto/userInput.dto';
 import { UserService } from './services/user.service';
+import { Response } from 'express';
 
-@Controller()
+@Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
@@ -24,17 +35,19 @@ export class UserController {
     @Post()
     async createUserController(
         @Body() { name, email, password, role, cpf }: UserDto,
-    ): Promise<IUserEntity> {
+        @Res() response: Response,
+    ) {
         try {
-            return await this.userService.createUserService({
+            const result = await this.userService.createUserService({
                 name,
                 email,
                 password,
                 role,
                 cpf,
             });
+            response.status(201).send(result);
         } catch (err) {
-            console.log('Erro no servidor ' + err);
+            throw new BadRequestException(err.message);
         }
     }
 
