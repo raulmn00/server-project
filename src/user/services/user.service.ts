@@ -5,6 +5,7 @@ import { PartialUserDto } from './dto/partialUserInput.dto';
 import { UserRepository } from '../user.repository';
 import { Injectable } from '@nestjs/common';
 import { Exceptions } from 'src/utils/exceptions/exceptionsHelper';
+import { ExceptionClass } from 'src/utils/exceptions/Exception';
 
 @Injectable()
 export class UserService {
@@ -16,10 +17,10 @@ export class UserService {
         const userEntity = { ...user, id: randomUUID() };
 
         if (user.password.length <= 7) {
-            throw {
-                message: 'Password must be have 7 or more characters.',
-                exception: Exceptions.InvalidData,
-            };
+            throw new ExceptionClass(
+                Exceptions.InvalidData,
+                'Password must be have 7 or more characters.',
+            );
         }
         const createdUser = await this.userRepository.createUserRepository(userEntity);
         return createdUser;

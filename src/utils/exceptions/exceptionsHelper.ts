@@ -17,7 +17,7 @@ export function handleException({ message, exception }: IException) {
         throw new BadRequestException(message);
     }
     if (exception === Exceptions.DatabaseException) {
-        throw new InternalServerErrorException('Error in database.');
+        throw new InternalServerErrorException(message ? message : 'Error in database.');
     }
     if (exception === Exceptions.UnauthorizedException) {
         throw new UnauthorizedException(

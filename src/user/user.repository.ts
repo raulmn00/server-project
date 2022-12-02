@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Exceptions } from 'src/utils/exceptions/exceptionsHelper';
 import { IUserEntity } from './entities/user.entity';
 import { PartialUserDto } from './services/dto/partialUserInput.dto';
+import { ExceptionClass } from 'src/utils/exceptions/Exception';
 
 @Injectable()
 export class UserRepository {
@@ -13,27 +14,54 @@ export class UserRepository {
             const createdUser = await this.prisma.user.create({ data: user });
             return createdUser;
         } catch (err) {
-            throw { message: err.message, exception: Exceptions.DatabaseException };
+            throw new ExceptionClass(
+                Exceptions.DatabaseException,
+                'Error creating user. Email or CPF already exists.',
+            );
         }
     }
     async updateUserRepository(user: PartialUserDto): Promise<IUserEntity> {
-        const updatedUser = await this.prisma.user.update({
-            where: { id: user.id },
-            data: user,
-        });
-
-        return updatedUser;
+        try {
+            const updatedUser = await this.prisma.user.update({
+                where: { id: user.id },
+                data: user,
+            });
+            return updatedUser;
+        } catch (err) {
+            throw new ExceptionClass(
+                Exceptions.DatabaseException,
+                'Error updating user. Please, verify the data sent.',
+            );
+        }
     }
     async deleteUserRepository(userId: string): Promise<IUserEntity> {
-        const deletedUser = await this.prisma.user.delete({ where: { id: userId } });
-        return deletedUser;
+        try {
+            const deletedUser = await this.prisma.user.delete({ where: { id: userId } });
+            return deletedUser;
+        } catch (err) {
+            throw new ExceptionClass(
+                Exceptions.DatabaseException,
+                'Error deleting user. Please verify the ID sent.',
+            );
+        }
     }
     async findAllUsersRepository(): Promise<IUserEntity[]> {
-        const allUsers = await this.prisma.user.findMany();
-        return allUsers;
+        try {
+            const allUsers = await this.prisma.user.findMany();
+            return allUsers;
+        } catch (err) {
+            throw new ExceptionClass(Exceptions.DatabaseException, err.message);
+        }
     }
     async findUserByIdRepository(id: string): Promise<IUserEntity> {
-        const foundUser = await this.prisma.user.findUniqueOrThrow({ where: { id: id } });
-        return foundUser;
+        try {
+            const foundUser = await this.prisma.user.findUniqueOrThrow({ where: { id: id } });
+            return foundUser;
+        } catch (err) {
+            throw new ExceptionClass(
+                Exceptions.DatabaseException,
+                'Error finding user. Please verify the ID sent.',
+            );
+        }
     }
 }
